@@ -1,10 +1,11 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, Req } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { CustomerResponseDto } from "./dto/response/customer-response.dto";
 import { ApiResponseDto } from "src/common/dto/api-response.dto";
 import { CustomerService } from "./customer.service";
 import { Customer } from "./entities/customer.entity";
 import { plainToInstance } from "class-transformer";
+import { Auth } from "../../common/decorators/auth.decorator";
 
 @ApiTags('Customers')
 @Controller('customers')
@@ -14,8 +15,10 @@ export class CustomerController {
 
 
     @Get()
+    @Auth('user')
     @ApiOkResponse({ type: ApiResponseDto<Customer[]> })
-    async findAll(): Promise<ApiResponseDto<Customer[]>> {
+    async findAll(@Req() req): Promise<ApiResponseDto<Customer[]>> {
+        console.log('>>> Current user:', req.user); //  check
         var listCustomers = await this.customerService.findAll();
         return {
             statusCode: 200,

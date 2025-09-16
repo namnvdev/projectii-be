@@ -10,7 +10,7 @@ import { LoggerMiddleware } from './common/middlewares/logger/logger.middleware'
 @Module({
   imports: [
         ConfigModule.forRoot({
-            isGlobal: true, // ✅ makes env vars available everywhere
+            isGlobal: true, // makes env vars available everywhere
         }),
         DatabaseModule,
         CustomerModule,

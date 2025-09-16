@@ -7,13 +7,13 @@ export const databaseConfig = (configService: ConfigService): TypeOrmModuleOptio
     console.log(configService.get<string>('DB_USER'));
     console.log(configService.get<string>('DB_NAME'));
   return {
-    type: 'mariadb', // ✅ works with MariaDB
+    type: 'mariadb', // works with MariaDB
     host: configService.get<string>('DB_HOST'),
     port: parseInt(configService.get<string>('DB_PORT')|| '3306', 10),
     username: configService.get<string>('DB_USER'),
     password: configService.get<string>('DB_PASS'),
     database: configService.get<string>('DB_NAME'),
     autoLoadEntities: true,
-    synchronize: true, // ⚠️ only for dev
+    synchronize: true, // only for dev
   };
 };

@@ -11,11 +11,25 @@ async function bootstrap() {
     .setDescription('The sales management system API description')
     .setVersion('1.0')
     .addTag('sms')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'access-token', // custom name
+    )
     .build();
     
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  app.enableCors({
+    origin: 'http://localhost:3001', // your Next.js port
+    credentials: true,
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }

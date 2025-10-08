@@ -11,6 +11,7 @@ export class CustomerResponseDto {
   @Expose()
   email: string;
   @ApiProperty({ example: '+84123456789', description: 'Phone number of the customer', required: false })
+  @Expose()
   phone?: string;
   @ApiProperty({ example: '175 Tay son', description: 'Address of the customer', required: false })
   @Expose()

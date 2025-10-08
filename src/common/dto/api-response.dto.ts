@@ -8,9 +8,9 @@ export class ApiResponseDto<T> {
     message: string;
 
     @ApiProperty({ description: 'Data of the response' })
-    data: T;
+    data?: T;
     
-    constructor(statusCode: number, message: string, data: T, error: any = null) {
+    constructor(statusCode: number, message: string, data?: T, error: any = null) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;

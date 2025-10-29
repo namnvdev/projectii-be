@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req , Post, Body, Put, Delete } from "@nestjs/common";
+import { Controller, Get, Param, Req , Post, Body, Put, Delete, Query, Logger } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { plainToInstance } from "class-transformer";
 
@@ -14,6 +14,21 @@ import { CustomerResponseDto } from "./dto/response/customer-response.dto";
 export class CustomerController {
 
     constructor(private readonly customerService: CustomerService) {}
+    
+    
+    @Get('search')
+    //@Auth('user')
+    @ApiOkResponse({ type: ApiResponseDto<Customer[]> })
+    async search(@Query('keyword') keyword: string): Promise<ApiResponseDto<Customer[]|null>> {
+        //console.log('>>> Current user:', req.user); //  check
+        Logger.log('Searching customers with keyword:', keyword);
+        var listCustomers = await this.customerService.search(keyword);
+        return {
+            statusCode: 200,
+            message: 'Success',
+            data: listCustomers
+        }
+    }
 
     @Get()
     @Auth('user')
@@ -32,7 +47,7 @@ export class CustomerController {
     @ApiOkResponse({ type: ApiResponseDto<CustomerResponseDto> })
     async findOne(@Param('id') id: number): Promise<ApiResponseDto<CustomerResponseDto | null>> {
         var customer = plainToInstance(CustomerResponseDto, await this.customerService.findOne(id), { excludeExtraneousValues: true });
-        
+        console.log('id:', id, 'customer:', customer);
         return {
             statusCode: 200,
             message: 'Successfully',
@@ -78,4 +93,5 @@ export class CustomerController {
             data: null
         }
     }   
+
 }

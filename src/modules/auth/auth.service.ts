@@ -30,6 +30,8 @@ export class AuthService {
   }
 
   async validateUser(username: string, pass: string): Promise<User> {
+    if (!username || !pass) throw new UnauthorizedException('Invalid credentials');
+    
     const user = await this.usersRepo.findOne({ where: { username } });
     if (user && (await bcrypt.compare(pass, user.password))) {
       return user;

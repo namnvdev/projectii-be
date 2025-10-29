@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Customer } from "./entities/customer.entity";
 import { Repository } from "typeorm";
@@ -30,5 +30,13 @@ export class CustomerService {
 
     async remove(id: number): Promise<void> {
         await this.customerRepository.delete(id);
+    }
+    async search(keyword: string): Promise<Customer[]> {
+        var results =  this.customerRepository
+            .createQueryBuilder('customer')
+            .where('customer.name LIKE :keyword OR customer.email LIKE :keyword OR customer.phone LIKE :keyword', { keyword: `%${keyword}%` })
+            .getMany();
+        Logger.log('Search results:', results);
+        return results;
     }
 }

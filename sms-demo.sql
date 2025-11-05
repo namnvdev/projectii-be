@@ -62,3 +62,8 @@ CREATE TABLE order_details (
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+
+-- add order_number column to orders table
+ALTER TABLE orders
+ADD COLUMN order_number VARCHAR(20) UNIQUE AFTER id;

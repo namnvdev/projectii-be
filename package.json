@@ -18,12 +18,14 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-
     "gen:entities": "ts-node tools/generate-entities.ts",
     "gen:organize": "ts-node tools/organize-entities.ts",
-    "gen:modules": "ts-node tools/smart-from-entities.ts --with-auth --with-swagger",
-    "gen:all": "npm run gen:entities && npm run gen:organize && npm run gen:modules"
-
+    "fix:entity-names": "ts-node tools/fix-entity-classnames.ts",
+    "fix:entity-imports": "ts-node tools/fix-entity-imports.ts",
+    "fix:entity-relation": "ts-node tools/fix-entity-relations.ts",
+    "fix:timestamps": "ts-node tools/fix-timestamp-defaults.ts",
+    "gen:modules": "ts-node tools/generate-modules.ts",
+    "gen:all": "npm run gen:entities && npm run gen:organize && npm run fix:entity-names && npm run fix:entity-imports && npm run fix:entity-relation && npm run gen:modules"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -41,6 +43,7 @@
     "mysql2": "^3.14.3",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "pluralize": "^8.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1",

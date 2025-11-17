@@ -7,6 +7,8 @@ import { DatabaseModule } from './databases/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { LoggerMiddleware } from './common/middlewares/logger/logger.middleware';
+import { OrderdetailModule } from './modules/orderdetails/orderdetail.module';
+import { ProductModule } from './modules/products/product.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { LoggerMiddleware } from './common/middlewares/logger/logger.middleware'
         DatabaseModule,
         CustomerModule,
         OrderModule,
+        OrderdetailModule,
+        ProductModule,
         AuthModule],
   controllers: [AppController],
   providers: [AppService],

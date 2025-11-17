@@ -4,12 +4,15 @@ import {glob} from "glob";
 import fs from "fs-extra";
 import path from "path";
 import { rename } from "fs";
+import pluralize from "pluralize";
+
+
 
 
 console.log("🏗️  Generating TypeORM entities from DB...");
 
 execSync(
-  "npx typeorm-model-generator -h localhost -d sms_demo -u root -x 123456 -p 3306 -e mysql -o src/modules/entities --ce pascal --cp camel --cf param --noConfig",
+  "npx typeorm-model-generator -h localhost -d sms_demo -u root -x 123456 -p 3306 -e mysql -o src/modules/entities --ce pascal --cp camel --cf param --noConfig --tablesPrefixStrip",
   { stdio: "inherit" }
 );
 
@@ -35,7 +38,22 @@ async function renameEntities() {
     //const moduleName = name.endsWith("s") ? name : `${name}s`; // pluralize folder
     //const targetDir = path.join(srcDir, moduleName, "entities");
     //fs.ensureDirSync(targetDir);
-    const targetFile = path.join(srcDir, `${name}.entity.ts`);
+
+    //convert plural to singular
+
+    const oldName = name;
+    const singular = pluralize.singular(oldName);
+
+    if (singular === oldName) continue; // already singular
+
+    console.log(`🔤 Renaming class ${oldName} → ${singular}`);
+
+    // src = src.replace(new RegExp(`class\\s+${oldName}\\b`, "g"), `class ${singular}`);
+    // src = src.replace(new RegExp(`${oldName} `, "g"), `${singular} `);
+
+
+
+    const targetFile = path.join(srcDir, `/${singular}.entity.ts`);
     fs.renameSync(file, targetFile);
 
     console.log(`✅ Moved ${file} → ${targetFile}`);

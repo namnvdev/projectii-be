@@ -1,42 +1,47 @@
 #!/usr/bin/env ts-node
-
-/**
- * organize-entities.ts
- * Moves all entity files from src/modules/ into
- * their own module/entity folders automatically.
- */
-
 import fs from "fs-extra";
 import path from "path";
 import { globSync } from "glob";
+import pluralize from "pluralize";
 
+const RAW_DIR = "src/modules/entities";
+const MODULES_DIR = "src/modules";
 
-const srcDir = "src/modules";
+async function main() {
+  console.log("📦 Organizing entities into /src/modules/<plural>/entities/...");
 
-async function organizeEntities() {
-  console.log("🔍 Searching for entity files...");
-
-  const files = globSync(`${srcDir}/entities/*.entity.ts`);
+  const files = globSync(`${RAW_DIR}/*.ts`);
   if (files.length === 0) {
-    console.log("⚠️ No top-level entity files found in src/modules/");
+    console.log("⚠️  No raw entities found in src/entities_raw");
     return;
   }
 
   for (const file of files) {
-    const base = path.basename(file, ".ts"); // e.g. "products.entity"
-    const name = base.replace(".entity", ""); // e.g. "products"
-    const moduleName = name.endsWith("s") ? name : `${name}s`; // pluralize folder
-    const targetDir = path.join(srcDir, moduleName, "entities");
+    const content = fs.readFileSync(file, "utf8");
+    const m = content.match(/export\s+class\s+(\w+)/);
+    if (!m) {
+      console.log(`  ⚠️  Skip (no class): ${file}`);
+      continue;
+    }
 
-    fs.ensureDirSync(targetDir);
+    const className = m[1]; // e.g. Customer
+    const singular = pluralize.singular(className).toLowerCase(); // "customer"
+    const plural = pluralize.plural(singular).toLowerCase();       // "customers"
 
-    const targetFile = path.join(targetDir, `${name}.entity.ts`);
-    fs.renameSync(file, targetFile);
+    const moduleDir = path.join(MODULES_DIR, plural);
+    const entitiesDir = path.join(moduleDir, "entities");
+    fs.ensureDirSync(entitiesDir);
 
-    console.log(`✅ Moved ${file} → ${targetFile}`);
+    const targetFile = path.join(entitiesDir, `${singular}.entity.ts`);
+
+    fs.moveSync(file, targetFile, { overwrite: true });
+
+    console.log(`  ➕ ${className} → ${targetFile}`);
   }
 
-  console.log("🎉 All entity files organized successfully!");
+  console.log("✅ Entity organization complete.");
 }
 
-organizeEntities().catch((err) => console.error("❌ Error:", err));
+main().catch(err => {
+  console.error("❌ Error in organize-entities:", err);
+});
